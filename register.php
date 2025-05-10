@@ -1,6 +1,7 @@
 <?php
 session_start();
 require "config.php";
+
 $username = trim($_POST["username"] ?? "");
 $email = trim($_POST["email"] ?? "");
 $password = trim($_POST["password"] ?? "");
@@ -33,15 +34,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($password !== $confirm_password) {
         $errors['confirm_password'] = "Passwords do not match";
     }
+
     if (empty($errors)) {
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, 2)");
-        $stmt->bind_param("sss", $username, $email, $hash);
+
+        $res = $conn->query("SELECT COUNT(*) AS cnt FROM users");
+        $cnt = $res->fetch_assoc()['cnt'] ?? 0;
+        $role = ($cnt == 0) ? 1 : 2;
+
+        $stmt = $conn->prepare(
+            "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)"
+        );
+        $stmt->bind_param("sssi", $username, $email, $hash, $role);
         $stmt->execute();
         $stmt->close();
-        $_SESSION['user_id'] = $conn->insert_id;
+
+        $_SESSION['user_id']  = $conn->insert_id;
         $_SESSION['username'] = $username;
-        $_SESSION['role'] = 2;
+        $_SESSION['role']     = $role;
+
         header("Location: index.php");
         exit();
     }

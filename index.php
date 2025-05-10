@@ -14,18 +14,35 @@ $result = $conn->query("SELECT id, product_name, price FROM products");
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
         <a class="navbar-brand" href="index.php">متجر</a>
-        <div class="ms-auto">
-            <?php if (isset($_SESSION['user_id'])): ?>
-                <span class="me-3">مرحباً، <?= htmlspecialchars($_SESSION['username']) ?></span>
-                <a href="products.php" class="btn btn-outline-primary btn-sm me-2">إدارة المنتجات</a>
-                <?php if ($_SESSION['role'] == 1): ?>
-                    <a href="users.php" class="btn btn-outline-danger btn-sm me-2">إدارة المستخدمين</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <li class="nav-item me-3">
+                        <span class="nav-link">مرحباً، <?= htmlspecialchars($_SESSION['username']) ?></span>
+                    </li>
+                    <li class="nav-item me-2">
+                        <a class="btn btn-outline-primary btn-sm" href="products.php">إدارة المنتجات</a>
+                    </li>
+                    <?php if ($_SESSION['role'] == 1): ?>
+                        <li class="nav-item me-2">
+                            <a class="btn btn-outline-danger btn-sm" href="users.php">إدارة المستخدمين</a>
+                        </li>
+                    <?php endif; ?>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-secondary btn-sm" href="logout.php">Logout</a>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item me-2">
+                        <a class="btn btn-primary btn-sm" href="login.php">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-success btn-sm" href="register.php">Register</a>
+                    </li>
                 <?php endif; ?>
-                <a href="logout.php" class="btn btn-outline-secondary btn-sm">Logout</a>
-            <?php else: ?>
-                <a href="login.php" class="btn btn-primary btn-sm me-2">Login</a>
-                <a href="register.php" class="btn btn-success btn-sm">Register</a>
-            <?php endif; ?>
+            </ul>
         </div>
     </div>
 </nav>
@@ -44,5 +61,6 @@ $result = $conn->query("SELECT id, product_name, price FROM products");
         <?php endwhile; ?>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
